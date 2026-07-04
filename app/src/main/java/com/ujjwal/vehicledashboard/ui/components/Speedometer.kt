@@ -9,16 +9,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.unit.dp
+import android.graphics.Paint
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
 
 @Composable
 fun Speedometer(
     speed: Int
 ) {
+    val animatedSpeed by animateFloatAsState(
+        targetValue = speed.toFloat(),
+        animationSpec = tween(700),
+        label = "speedAnimation"
+    )
 
     Canvas(
         modifier = Modifier
             .size(320.dp)
     ) {
+        val textPaint = Paint().apply {
+            color = android.graphics.Color.DKGRAY
+            textSize = 32f
+            textAlign = Paint.Align.CENTER
+            isAntiAlias = true
+        }
+
+        val needleAngle =
+            135f + (animatedSpeed / 180f) * 270f
 
         drawCircle(
             color = Color.DarkGray,
@@ -62,5 +81,42 @@ fun Speedometer(
                 strokeWidth = if (isMajorTick) 6f else 3f
             )
         }
+        for (i in 0..8) {
+
+            val speedLabel = i * 20
+
+            val angle = Math.toRadians((135 + i * 37.5).toDouble())
+
+            val radius = size.minDimension / 2 - 60f
+
+            val x = center.x + radius * kotlin.math.cos(angle).toFloat()
+
+            val y = center.y + radius * kotlin.math.sin(angle).toFloat()
+
+            drawContext.canvas.nativeCanvas.drawText(
+                speedLabel.toString(),
+                x,
+                y,
+                textPaint
+            )
+        }
+        val needleLength = size.minDimension / 2 - 60f
+
+        val angleRad = Math.toRadians(needleAngle.toDouble())
+
+        drawLine(
+            color = Color.Red,
+            start = center,
+            end = Offset(
+                x = center.x + needleLength * kotlin.math.cos(angleRad).toFloat(),
+                y = center.y + needleLength * kotlin.math.sin(angleRad).toFloat()
+            ),
+            strokeWidth = 8f
+        )
+        drawCircle(
+            color = Color.Red,
+            radius = 10f,
+            center = center
+        )
     }
 }
