@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun Speedometer(
@@ -14,7 +16,8 @@ fun Speedometer(
 ) {
 
     Canvas(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .size(320.dp)
     ) {
 
         drawCircle(
@@ -32,21 +35,31 @@ fun Speedometer(
 
             val angle = Math.toRadians((135 + index * 7.5).toDouble())
 
+            val isMajorTick = index % 5 == 0
+
+            val outerRadius = size.minDimension / 2 - 20f
+
+            val innerRadius =
+                if (isMajorTick)
+                    outerRadius - 35f
+                else
+                    outerRadius - 20f
+
             val start = Offset(
-                x = center.x + (size.minDimension / 2 - 40f) * kotlin.math.cos(angle).toFloat(),
-                y = center.y + (size.minDimension / 2 - 40f) * kotlin.math.sin(angle).toFloat()
+                x = center.x + innerRadius * kotlin.math.cos(angle).toFloat(),
+                y = center.y + innerRadius * kotlin.math.sin(angle).toFloat()
             )
 
             val end = Offset(
-                x = center.x + (size.minDimension / 2 - 20f) * kotlin.math.cos(angle).toFloat(),
-                y = center.y + (size.minDimension / 2 - 20f) * kotlin.math.sin(angle).toFloat()
+                x = center.x + outerRadius * kotlin.math.cos(angle).toFloat(),
+                y = center.y + outerRadius * kotlin.math.sin(angle).toFloat()
             )
 
             drawLine(
                 color = Color.DarkGray,
                 start = start,
                 end = end,
-                strokeWidth = 4f
+                strokeWidth = if (isMajorTick) 6f else 3f
             )
         }
     }

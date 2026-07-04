@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ujjwal.vehicledashboard.model.VehicleState
@@ -35,9 +36,14 @@ fun DashboardScreen(
         ) {
 
             item {
-                Speedometer(
-                    speed = state.speed
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Speedometer(
+                        speed = state.speed
+                    )
+                }
             }
 
             item {
